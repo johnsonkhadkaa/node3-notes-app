@@ -1,49 +1,67 @@
 const fs = require("fs");
 const { parse } = require("path");
 const chalk = require("chalk");
+const { title } = require("process");
+const { match } = require("assert");
 
-const getNotes = function () {
-  return "Your notes ...";
-};
 
-const addNotes = function (title, body) {
+
+const addNotes = (title, body) => {
   const notes = loadNotes();
-  const duplicateNotes = notes.filter(function (note) {
-    return note.title === title;
-  });
-  //   console.log(notes)
-  if (duplicateNotes.length === 0) {
+  // const duplicateNotes = notes.filter((note) => {
+  //   return note.title === title;
+  // });
+  const duplicateNote = notes.find((note)=> note.title == title )
+  if (!duplicateNote) {
     notes.push({
       title: title,
       body: body,
     });
     saveNotes(notes);
-    console.log("New note added!");
+    console.log(chalk.bold.green("New note added!"));
   } else {
-    console.log("Note title is taken!");
+    console.log(chalk.bold.red("Note title is already taken!"));
   }
 };
 
-const removeNotes = function (title) {
+const removeNotes = (title) => {
   const notes = loadNotes();
   const tokeepNotes = notes.filter(function (note) {
     return note.title !== title;
   });
 
   if (notes.length > tokeepNotes.length) {
-    console.log(chalk.bold.green("Title Match Found & Removed!"));
+    console.log(chalk.inverse.green("Title Match Found & Removed!"));
   } else {
-    console.log(chalk.bold.red("Title Match Not Found!"));
+    console.log(chalk.inverse.red("Title Match Not Found!"));
   }
   saveNotes(tokeepNotes);
 };
 
-const saveNotes = function (notes) {
+const saveNotes = (notes) => {
   const dataJSON = JSON.stringify(notes);
   fs.writeFileSync("notes.json", dataJSON);
 };
 
-const loadNotes = function () {
+const listNotes = () => {
+  console.log(chalk.inverse.yellow("Your notes :"));
+  const notes = loadNotes();
+  notes.forEach((note) => {
+    console.log(note.title);
+  });
+};
+
+const readNote = (title) => {
+  const notes = loadNotes();
+  const duplicateNotes = notes.find((note) => note.title === title)
+  if (duplicateNotes) {
+    console.log(chalk.inverse.green(duplicateNotes.title) + " : " + (duplicateNotes.body));
+  } else {
+    console.log(chalk.inverse.red("Note title Not Available!"));
+  }
+};
+
+const loadNotes = () => {
   try {
     const dataBuffer = fs.readFileSync("notes.json");
     const dataJSON = dataBuffer.toString();
@@ -54,7 +72,8 @@ const loadNotes = function () {
 };
 
 module.exports = {
-  getNotes: getNotes,
   addNotes: addNotes,
   removeNotes: removeNotes,
+  listNotes: listNotes,
+  readNote: readNote,
 };
