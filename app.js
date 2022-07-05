@@ -1,11 +1,15 @@
 const notes = require("./notes.js");
 const yargs = require("yargs");
+const { argv } = require("yargs");
 
 // const chalk = require('chalk')
-// Add , Remove , List , Read functionality using yargs
+
+
+// to run this: node app.js add/list/read/remove --title=" " --body=" "
 
 // argv property is an inbuilt application programming interface of the process module which is used to get the arguments passed to the node. js process when run in the command line. Return Value: This property returns an array containing the arguments passed to the process when run it in the command line.
 
+// Add , Remove , List , Read functionality using yargs
 // Add
 yargs.command({
   command: "add",
